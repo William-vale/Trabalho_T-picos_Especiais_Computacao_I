@@ -36,7 +36,7 @@ Todo o código foi desenvolvido em **Python**, utilizando o ambiente **Google Co
 <br/>
 🔗 **Notebook no Google Colab com a parte de regressão:** [Acessar notebook](https://colab.research.google.com/drive/1r2uWPups1EFy5Hs6DBTDmpBqFxe1NIXL?usp=sharing#scrollTo=ZKPm6XCMqGB0)
 <br/>
-🔗 **Acessar Slide de Apresentação:** [Acessar Slide](https://docs.google.com/presentation/d/1egZrnOOHDVeNVihhj5zVJnhyT5VM7VFH/edit?slide=id.p1#slide=id.p1)
+🔗 **Acessar Slide de Apresentação:** [Acessar Slide](https://drive.google.com/file/d/1h2XIRlcCsrsXbv217TdQRPm_ZLNG6ZqS/view?usp=drivesdk)
 
 ---
 
