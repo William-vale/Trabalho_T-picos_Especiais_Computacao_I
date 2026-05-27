@@ -246,7 +246,8 @@ df_mulheres_2022 = df_paises[
 ```
 
 <!-- 📸 PRINT: Tabela top_10_mulheres_2022 -->
-> 🖼️ **[Inserir print: Top 10 países — Taxa de Homicídios de Mulheres (2022)]**
+<img width="577" height="302" alt="image" src="https://github.com/user-attachments/assets/84af754f-17fc-4883-b43c-ee02b09dfa85" />
+<br/>
 
 #### Análise 2b — Proporção feminina no total de vítimas
 
