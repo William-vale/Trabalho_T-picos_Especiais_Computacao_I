@@ -374,42 +374,147 @@ Com essa abordagem, o ranking reflete países onde o **risco real** de uma mulhe
 
 ## Regressão
 
-> 🚧 **Seção em desenvolvimento** — os resultados da regressão serão adicionados nesta seção.
-
-**Objetivo:** Construir um modelo de regressão capaz de explicar e prever a variação nas taxas de homicídio entre os países, com base em variáveis como região geográfica, sub-região e ano.
+**Objetivo:** Treinar um modelo de Regressão Linear Simples para capturar a tendência histórica de homicídios no Brasil e gerar previsões para os anos 2023 a 2026.
 
 ### O que é Regressão Linear?
 
-A regressão linear busca a relação matemática entre uma variável dependente (o que queremos prever) e uma ou mais variáveis independentes (os fatores explicativos):
+A regressão linear busca a relação matemática entre uma variável que queremos prever e outras variáveis explicativas:
 
 ```
-y = β₀ + β₁x₁ + β₂x₂ + ... + ε
+y = β₀ + β₁x + ε
 ```
 
-| Símbolo | Significado |
+| Símbolo | Significado | Neste projeto |
+|---|---|---|
+| `y` | Variável dependente (o que prevemos) | Número de homicídios |
+| `β₀` | Intercepto — valor base quando x = 0 | Calculado pelo modelo |
+| `β₁` | Coeficiente — peso da variável preditora | Variação por ano |
+| `x` | Variável preditora | Ano (Year) |
+| `ε` | Erro / resíduo do modelo | Diferença real × previsto |
+
+### Configuração da análise
+
+| Parâmetro | Valor |
 |---|---|
-| `y` | Variável dependente (taxa de homicídio) |
-| `β₀` | Intercepto (valor base) |
-| `β₁, β₂...` | Coeficientes (peso de cada variável) |
-| `x₁, x₂...` | Variáveis explicativas (região, ano...) |
-| `ε` | Erro / resíduo do modelo |
+| **País analisado** | Brasil (`Brazil`) |
+| **Período de treino** | 2013 a 2022 (10 anos) |
+| **Variável preditora (X)** | `Year` — ano do registro |
+| **Variável alvo (y)** | `VALUE` — número de homicídios |
+| **Filtro de sexo** | `Total` (homens + mulheres) |
+| **Biblioteca** | `sklearn.linear_model.LinearRegression` |
+| **Métrica de avaliação** | MSE — Mean Squared Error |
 
-### Como avaliar o modelo?
+<br/>
+<!-- 📸 PRINT: print("Dados carregados com sucesso! Linhas e colunas:", df.shape) -->
+<img width="476" height="143" alt="image" src="https://github.com/user-attachments/assets/0b771c5e-bb0f-49f4-819f-4fef2be3832c" />
+<br/>
+
+---
+
+### Etapa 1 — Filtragem dos Dados
+
+```python
+df_filtrado = df[
+    (df['Country'] == 'Brazil') &
+    (df['Sex'] == 'Total') &
+    (df['Year'] >= 2013) &
+    (df['Year'] <= 2022)
+].copy()
+```
+
+Isolamos apenas os registros do Brasil, com sexo agregado (`Total`) e dentro do período de análise. O `.copy()` garante que alterações futuras não afetem o DataFrame original.
+
+---
+
+### Etapa 2 — Agrupamento por Ano com `.max()`
+
+```python
+df_agrupado = df_filtrado.groupby('Year')['VALUE'].max().reset_index()
+```
+
+**Por que `.max()` e não `.sum()` ou `.mean()`?**
+
+O dataset tem múltiplas linhas por ano para o mesmo país — cada linha representa uma combinação de dimensão, categoria e mecanismo. Somar essas linhas duplicaria os valores. O `.max()` captura o maior valor reportado para aquele ano, que corresponde ao total agregado (linha com `Dimension = Total`, `Category = Total`).
+
+<br/>
+<!-- 📸 PRINT: df_agrupado após o groupby — tabela com Year e VALUE por ano -->
+<img width="445" height="264" alt="image" src="https://github.com/user-attachments/assets/ae2f487e-1736-4ed1-8666-d655bc0a3eb9" />
+<br/>
+
+
+---
+
+### Etapa 3 — Tratamento de Zeros
+
+```python
+df_agrupado['VALUE'] = df_agrupado['VALUE'].replace(0, np.nan)
+df_agrupado['VALUE'] = df_agrupado['VALUE'].interpolate()
+```
+
+**Por que substituir zeros?**
+
+Um valor `0` em dados de homicídios não significa que não houve mortes — indica dado ausente, falha no reporte ou erro na coleta. Incluir zeros no treino puxaria a linha de regressão artificialmente para baixo, distorcendo as previsões.
+
+**Por que interpolação e não remoção?**
+
+Com apenas 10 pontos de dados (2013–2022), remover uma linha causaria perda significativa de informação e quebraria a continuidade da série temporal. A interpolação linear estima o valor faltante com base nos anos vizinhos, preservando todos os pontos.
+
+---
+
+### Etapa 4 — Treinamento do Modelo
+
+```python
+X = df_agrupado[['Year']]   # Variável preditora (precisa ser 2D)
+y = df_agrupado['VALUE']    # Variável alvo
+
+modelo_final = LinearRegression()
+modelo_final.fit(X, y)
+```
+
+O modelo ajusta os parâmetros `β₀` (intercepto) e `β₁` (coeficiente do ano) minimizando o erro quadrático total entre os valores reais e os previstos — técnica conhecida como **Mínimos Quadrados Ordinários (OLS)**.
+
+---
+
+### Etapa 5 — Avaliação com MSE
+
+```python
+previsoes_treino = modelo_final.predict(X)
+mse_final = mean_squared_error(y, previsoes_treino)
+
+print(f"Erro Quadrático Médio (MSE) no Treino: {mse_final:.0f}")
+```
 
 | Métrica | O que mede | Interpretação |
 |---|---|---|
-| **R²** | Proporção da variância explicada | Quanto mais próximo de 1, melhor |
-| **RMSE** | Erro médio das previsões | Quanto menor, mais preciso |
-| **p-valor** | Significância estatística de cada variável | p < 0,05 indica variável relevante |
+| **MSE** | Média dos erros ao quadrado | Quanto menor, melhor o ajuste |
+| **√MSE (RMSE)** | Erro médio na mesma unidade de y | Interpretável em nº de homicídios |
 
-<!-- 📸 PRINT: Resultado do modelo de regressão (summary, coeficientes, R²) -->
-> 🖼️ **[Inserir print: sumário do modelo de regressão]**
+---
 
-<!-- 📸 PRINT: Gráfico de valores reais vs valores previstos -->
-> 🖼️ **[Inserir print: gráfico Valores Reais × Previstos]**
+### Etapa 6 — Previsões para Anos Futuros
 
-<!-- 📸 PRINT: Gráfico de resíduos -->
-> 🖼️ **[Inserir print: gráfico de resíduos do modelo]**
+```python
+anos_futuros = [2023, 2024, 2025, 2026]
+dados_futuros = pd.DataFrame({'Year': anos_futuros})
+
+previsoes_futuras = modelo_final.predict(dados_futuros)
+
+for ano, taxa in zip(anos_futuros, previsoes_futuras):
+    print(f"   Ano {ano}: {taxa:.0f}")
+```
+
+O modelo aplica a equação aprendida (`β₀ + β₁ × Ano`) sobre cada ano futuro. Como a regressão é linear, a variação entre anos consecutivos é constante — a reta continua com a mesma inclinação aprendida no treino.
+
+<br/>
+<!-- 📸 PRINT: Previsões para 2023, 2024, 2025 e 2026 -->
+<img width="377" height="227" alt="image" src="https://github.com/user-attachments/assets/5a1f34dd-7ae4-41ca-ab55-3f1bd49a0d5b" />
+<br/>
+
+---
+
+### Limitação importante
+
+A regressão linear assume que a tendência histórica continuará. Eventos externos — mudanças de política pública, crises econômicas, conflitos — podem quebrar essa tendência. As previsões devem ser interpretadas como **extrapolação da tendência observada**, não como certeza.
 
 ---
 
@@ -427,6 +532,10 @@ Um dos pontos centrais deste trabalho foi tomar decisões metodológicas conscie
 | **Período 2018–2022** | Últimos 5 anos com cobertura global razoável | Anos mais recentes têm dados incompletos |
 | **Filtros Total** | Age, Sex, Dimension, Category sempre fixados em `Total` | Evitar dupla contagem de subcategorias |
 | **idxmin() vs sort** | `.idxmin()` para encontrar mínimos por grupo | Mais eficiente e direto do que ordenar e selecionar |
+| **País da regressão** | Brasil | Série histórica consistente + país de alto volume |
+| **Agrupamento .max()** | `.max()` ao consolidar múltiplas linhas por ano | `.sum()` duplicaria valores de subcategorias |
+| **Zeros → NaN → interpolate()** | Substituir zeros por NaN e interpolar | Zero não significa ausência de crime, e interpolação preserva os 10 pontos |
+| **Variável preditora** | `Year` (ano) | Captura tendência temporal de forma simples e interpretável |
 
 ---
 
