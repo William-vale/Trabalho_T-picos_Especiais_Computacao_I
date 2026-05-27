@@ -18,6 +18,11 @@
   - [Pergunta 3 — Regiões com Mais Homicídios](#pergunta-3--regiões-com-mais-homicídios)
   - [Pergunta 4 — Países com Menor Número de Homicídios por Sub-região](#pergunta-4--países-com-menor-número-de-homicídios-por-sub-região)
   - [Pergunta 5 — Países com Menor Mortalidade Feminina](#pergunta-5--países-com-menor-mortalidade-feminina)
+  - [Pergunta 6 — Sub-regiões com Maior Número de Homicídios](#pergunta-6--sub-regiões-com-maior-número-de-homicídios)
+  - [Pergunta 7 — País com Maior Número de Homicídios por Continente em 2020](#pergunta-7--país-com-maior-número-de-homicídios-por-continente-em-2020)
+  - [Pergunta 8 — País Mais Violento para Mulheres em 2021](#pergunta-8--país-mais-violento-para-mulheres-em-2021)
+  - [Pergunta 9 — País com Maior Média Anual de Vítimas de Homicídio](#pergunta-9--país-com-maior-média-anual-de-vítimas-de-homicídio)
+  - [Pergunta 10 — Média Anual de Homicídios no Brasil nos Últimos 10 Anos](#pergunta-10--média-anual-de-homicídios-no-brasil-nos-últimos-10-anos)
 - [Regressão](#regressão)
 - [Decisões Metodológicas](#decisões-metodológicas)
 - [Autores](#autores)
@@ -375,6 +380,276 @@ Com essa abordagem, o ranking reflete países onde o **risco real** de uma mulhe
 
 ---
 
+### Pergunta 6 — Sub-regiões com Maior Número de Homicídios
+
+**Objetivo:** Identificar quais sub-regiões geográficas concentram o maior volume de homicídios, utilizando tanto o número absoluto quanto a taxa proporcional para uma análise completa.
+
+Esta pergunta usa **duas métricas complementares**, pois cada uma responde uma dimensão diferente do problema.
+
+#### Análise 6a — Volume absoluto de homicídios (`Counts`)
+
+```python
+df_count = df_paises[
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Counts') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+ranking_count = (
+    df_count.groupby('Subregion')['VALUE']
+    .sum()
+    .sort_values(ascending=False)
+)
+```
+
+**Por que `Counts` aqui?** O volume absoluto indica onde fisicamente ocorre o maior número de homicídios — útil para alocação de recursos e políticas públicas de segurança em escala.
+
+> Os filtros `Sex = Total`, `Age = Total`, `Dimension = Total` e `Category = Total` garantem que cada homicídio seja contabilizado **apenas uma vez**, evitando a duplicação de subcategorias.
+
+<br/>
+<!-- 📸 PRINT: ranking_count.head(10) — Top 10 sub-regiões por volume -->
+<img width="279" height="339" alt="image" src="https://github.com/user-attachments/assets/8f0be0a4-a49e-4603-9ddf-df1bf2a4efc6" />
+<br/>
+
+#### Análise 6b — Taxa média por 100 mil habitantes
+
+```python
+df_rate = df_paises[
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Rate per 100,000 population') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+ranking_rate = (
+    df_rate.groupby('Subregion')['VALUE']
+    .mean()
+    .sort_values(ascending=False)
+)
+```
+
+**Por que também calcular a taxa?** Sub-regiões muito populosas aparecem no topo do ranking absoluto independentemente da sua violência real. A taxa proporcional permite comparações mais justas, revelando quais sub-regiões têm maior risco per capita — o que pode ser diferente do ranking por volume.
+
+<br/>
+<!-- 📸 PRINT: ranking_rate.head(10) — Top 10 sub-regiões por taxa média -->
+<img width="277" height="329" alt="image" src="https://github.com/user-attachments/assets/af20aa40-8754-4344-97eb-de41620c348a" />
+<br/>
+
+---
+
+### Pergunta 7 — País com Maior Número de Homicídios por Continente em 2020
+
+**Objetivo:** Para cada continente, identificar qual país registrou o maior número absoluto de homicídios no ano de 2020.
+
+#### Decisões metodológicas
+
+**Por que `Counts` e não taxa?** A pergunta busca o país com o **maior volume** de homicídios dentro de cada continente — isso requer contagem absoluta de vítimas. Usar taxa mudaria a pergunta para "maior risco proporcional", que é uma análise diferente.
+
+**Por que 2020?** É um ano recente com boa cobertura de dados para a maioria dos países. Permite um retrato atual da distribuição de violência por continente.
+
+**Por que `.idxmax()` por grupo?** Após agrupar por continente e país, o `.idxmax()` retorna diretamente o índice do maior valor em cada continente — mais eficiente do que ordenar toda a tabela e filtrar o topo de cada grupo.
+
+```python
+df_2020 = df_paises[
+    (df_paises['Year'] == 2020) &
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Counts') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+homicidios = (
+    df_2020.groupby(['Region', 'Country'])['VALUE']
+    .sum()
+    .reset_index()
+)
+
+idx = homicidios.groupby('Region')['VALUE'].idxmax()
+
+resultado = homicidios.loc[idx].sort_values('VALUE', ascending=False)
+```
+
+**Funções-chave utilizadas:**
+- `.groupby(['Region', 'Country'])` — agrupa por continente e país simultaneamente
+- `.idxmax()` — retorna o índice do maior valor dentro de cada continente
+- `.loc[idx]` — recupera as linhas completas (com país e continente) a partir dos índices
+
+<br/>
+<!-- 📸 PRINT: Tabela resultado — país líder em homicídios por continente em 2020 -->
+<img width="249" height="142" alt="image" src="https://github.com/user-attachments/assets/c8994269-d63b-4cfe-bb99-a0b053a53cca" />
+<br/>
+
+---
+
+### Pergunta 8 — País Mais Violento para Mulheres em 2021
+
+**Objetivo:** Identificar o país com maior incidência de homicídios femininos em 2021, demonstrando por que a taxa proporcional é a métrica correta — e não o volume absoluto.
+
+Esta pergunta foi deliberadamente construída com **duas abordagens** para expor um viés estatístico comum.
+
+#### Análise 8a — Por volume absoluto (`Counts`) — enviesada
+
+```python
+df_mulheres_count = df_paises[
+    (df_paises['Year'] == 2021) &
+    (df_paises['Sex'] == 'Female') &
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Counts') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+ranking_mulheres_count = (
+    df_mulheres_count.groupby('Country')['VALUE']
+    .mean()
+    .sort_values(ascending=False)
+)
+```
+
+**Problema:** países com grande população feminina — como Brasil, Índia, México — aparecem no topo simplesmente pelo tamanho da população, não pela proporção de risco. O ranking por volume **favorece e enviesa países muito populosos**.
+
+<br/>
+<!-- 📸 PRINT: ranking_mulheres_count.head(10) — por volume -->
+<img width="296" height="323" alt="image" src="https://github.com/user-attachments/assets/d93612d5-7e2d-442a-a2b8-894124877047" />
+<br/>
+
+#### Análise 8b — Por taxa proporcional — correta
+
+```python
+df_mulheres_rate = df_paises[
+    (df_paises['Year'] == 2021) &
+    (df_paises['Sex'] == 'Female') &
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Rate per 100,000 population') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+ranking_mulheres_rate = (
+    df_mulheres_rate.groupby('Country')['VALUE']
+    .mean()
+    .sort_values(ascending=False)
+)
+```
+
+**Vantagem:** a taxa por 100 mil habitantes elimina o efeito do tamanho da população e revela onde o **risco proporcional** de uma mulher ser assassinada é genuinamente maior — independentemente de o país ter 1 milhão ou 200 milhões de habitantes.
+
+> O filtro `Sex == 'Female'` combinado com `Age = Total`, `Dimension = Total` e `Category = Total` garante que apenas o total de mulheres vítimas seja contabilizado, sem duplicações por subcategorias.
+
+<br/>
+<!-- 📸 PRINT: ranking_mulheres_rate.head(10) — por taxa -->
+<img width="295" height="323" alt="image" src="https://github.com/user-attachments/assets/64060ced-a400-4200-983c-cc270ec28737" />
+<br/>
+
+---
+
+### Pergunta 9 — País com Maior Média Anual de Vítimas de Homicídio
+
+**Objetivo:** Identificar os países que apresentam, em média por ano, os maiores volumes de homicídios intencionais ao longo de toda a série histórica disponível.
+
+#### Decisão metodológica: média em vez de soma total
+
+```python
+df_vitimas = df_paises[
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Counts') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+ranking_media = (
+    df_vitimas.groupby('Country')['VALUE']
+    .mean()
+    .sort_values(ascending=False)
+)
+```
+
+**Por que média e não soma?** Usar a soma total histórica favorece países com **mais anos reportados** na base de dados — um país que reportou 30 anos acumularia mais homicídios do que um que reportou apenas 10, mesmo que seja menos violento. A média por ano nivela a comparação e reflete o **padrão estrutural** de violência de cada país, independentemente da duração da série histórica disponível.
+
+**Por que `Counts` nesta análise?** O objetivo é identificar onde ocorre o maior **volume** de homicídios — não o maior risco proporcional. Países com populações muito grandes como Brasil, México e Índia tendem a aparecer no topo, o que é esperado e informativo para esta pergunta específica.
+
+<br/>
+<!-- 📸 PRINT: ranking_media.head(10) — países com maior média anual de homicídios -->
+<img width="234" height="308" alt="image" src="https://github.com/user-attachments/assets/29b1426f-1af0-4288-afa6-2a5fff32e9f0" />
+<br/>
+
+---
+
+### Pergunta 10 — Média Anual de Homicídios no Brasil nos Últimos 10 Anos
+
+**Objetivo:** Calcular a média anual de homicídios no Brasil entre 2012 e 2021, usando tanto o número absoluto quanto a taxa por 100 mil habitantes como métricas complementares.
+
+#### Decisões metodológicas
+
+**Por que agrupar por ano antes de calcular a média?** O dataset tem múltiplas linhas por ano para o Brasil (por dimensão, categoria, faixa etária etc.). Se calculássemos a média diretamente sobre todas as linhas, estaríamos incluindo subcategorias e duplicando contagens. O agrupamento por ano garante primeiro o total real de cada ano, e a média final é calculada sobre esses totais anuais — resultando na **média de homicídios por ano**.
+
+**Por que o período vai de 2012 a 2021 e não até 2023?** Embora o filtro permita anos até 2023, a base de dados contém registros para o Brasil apenas até 2021. O período efetivo analisado é de **10 anos: 2012 a 2021**.
+
+#### Análise 10a — Média por contagem absoluta
+
+```python
+df_brasil = df_paises[
+    (df_paises['Country'] == 'Brazil') &
+    (df_paises['Year'].between(2012, 2021)) &
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Counts') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+# Passo 1: total real por ano
+media_por_ano = df_brasil.groupby('Year')['VALUE'].sum()
+
+# Passo 2: média dos totais anuais
+media_homicidios = media_por_ano.mean()
+
+print(f'Média anual de homicídios no Brasil (2012-2021): {media_homicidios:.2f}')
+```
+
+<br/>
+<!-- 📸 PRINT: media_por_ano — série histórica por ano + média final -->
+<img width="370" height="338" alt="image" src="https://github.com/user-attachments/assets/e55c67ee-a65c-4f21-a0c6-960e99eb8a24" />
+<br/>
+
+#### Análise 10b — Taxa média por 100 mil habitantes
+
+```python
+df_brasil_taxa = df_paises[
+    (df_paises['Country'] == 'Brazil') &
+    (df_paises['Year'].between(2012, 2021)) &
+    (df_paises['Indicator'] == 'Victims of intentional homicide') &
+    (df_paises['Unit of measurement'] == 'Rate per 100,000 population') &
+    (df_paises['Sex'] == 'Total') &
+    (df_paises['Age'] == 'Total') &
+    (df_paises['Dimension'] == 'Total') &
+    (df_paises['Category'] == 'Total')
+]
+
+print(f"Taxa média no período: {df_brasil_taxa['VALUE'].mean():.2f}")
+```
+
+**Por que calcular também a taxa?** O número absoluto de homicídios é influenciado pelo crescimento da população ao longo dos anos. A taxa por 100 mil habitantes oferece uma **leitura mais estável da tendência real de violência** no período, independentemente das variações populacionais.
+
+<br/>
+<!-- 📸 PRINT: saída da taxa média por 100 mil hab. no período -->
+<img width="370" height="338" alt="image" src="https://github.com/user-attachments/assets/6e340216-9aee-4787-9036-b3c5b1b2f4fd" />
+<br/>
+
+---
+
 ## Regressão
 
 **Objetivo:** Treinar um modelo de Regressão Linear Simples para capturar a tendência histórica de homicídios no Brasil e gerar previsões para os anos 2023 a 2026.
@@ -535,6 +810,10 @@ Um dos pontos centrais deste trabalho foi tomar decisões metodológicas conscie
 | **Período 2018–2022** | Últimos 5 anos com cobertura global razoável | Anos mais recentes têm dados incompletos |
 | **Filtros Total** | Age, Sex, Dimension, Category sempre fixados em `Total` | Evitar dupla contagem de subcategorias |
 | **idxmin() vs sort** | `.idxmin()` para encontrar mínimos por grupo | Mais eficiente e direto do que ordenar e selecionar |
+| **idxmax() por grupo** | `.idxmax()` para encontrar máximos por continente (P7) | Retorna diretamente o índice do maior valor por grupo |
+| **Duas métricas (P6 e P8)** | Volume absoluto + taxa proporcional em paralelo | Cada métrica responde uma dimensão diferente do problema |
+| **Média vs soma histórica (P9)** | Média anual por país | Soma favorece países com mais anos reportados na base |
+| **Agrupamento anual antes da média (P10)** | `groupby('Year').sum()` antes de `.mean()` | Garante o total real por ano antes de calcular a média |
 | **País da regressão** | Brasil | Série histórica consistente + país de alto volume |
 | **Agrupamento .max()** | `.max()` ao consolidar múltiplas linhas por ano | `.sum()` duplicaria valores de subcategorias |
 | **Zeros → NaN → interpolate()** | Substituir zeros por NaN e interpolar | Zero não significa ausência de crime, e interpolação preserva os 10 pontos |
