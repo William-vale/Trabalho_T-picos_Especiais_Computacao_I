@@ -222,7 +222,9 @@ df_taxa = df_paises[
 #### Resultado
 
 <!-- 📸 PRINT: Tabela top_10_paises com países e taxa média -->
-> 🖼️ **[Inserir print: tabela Top 10 países — Taxa Média por 100 mil hab.]**
+<img width="652" height="308" alt="image" src="https://github.com/user-attachments/assets/d7fc5b3a-264c-411c-b716-62c384d70439" />
+<br/>
+<br/>
 
 ---
 
