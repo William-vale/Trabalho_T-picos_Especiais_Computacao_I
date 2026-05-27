@@ -177,7 +177,7 @@ df_onu = df_tratado[
 # df_onu.shape    → (XXXX, 13)
 ```
 
-> 🖼️ **[Inserir print: df_paises.shape e df_onu.shape]**
+> 🖼️ <img width="300" height="282" alt="image" src="https://github.com/user-attachments/assets/3038baa6-d858-432b-acd1-31dd33a548cb" />
 
 <!-- 📸 PRINT: Saída do df_paises.describe() -->
 > 🖼️ **[Inserir print: df_paises.describe()]**
