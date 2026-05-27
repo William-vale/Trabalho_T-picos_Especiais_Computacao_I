@@ -245,6 +245,7 @@ df_mulheres_2022 = df_paises[
 ]
 ```
 
+<br/>
 <!-- 📸 PRINT: Tabela top_10_mulheres_2022 -->
 <img width="577" height="302" alt="image" src="https://github.com/user-attachments/assets/84af754f-17fc-4883-b43c-ee02b09dfa85" />
 <br/>
@@ -264,8 +265,10 @@ df_proporcao['Proporção Feminina (%)'] = (
 ) * 100
 ```
 
+<br/>
 <!-- 📸 PRINT: Tabela df_proporcao com porcentagem de vítimas femininas -->
-> 🖼️ **[Inserir print: tabela Proporção Feminina (%) nos 10 países]**
+<img width="652" height="308" alt="image" src="https://github.com/user-attachments/assets/5e61609e-7f38-4348-8ced-cdaa16e5abbd" />
+<br/>
 
 ---
 
@@ -282,8 +285,10 @@ ranking_regioes = df_regioes.groupby('Region')['VALUE'].sum().reset_index()
 ranking_regioes = ranking_regioes.sort_values(by='VALUE', ascending=False)
 ```
 
+<br/>
 <!-- 📸 PRINT: Tabela ranking_regioes com total de homicídios por região -->
-> 🖼️ **[Inserir print: tabela — Total de Homicídios por Região]**
+<img width="249" height="169" alt="image" src="https://github.com/user-attachments/assets/cb9cebd8-719e-4900-93b5-df30d8045b6a" />
+<br/>
 
 ---
 
@@ -302,8 +307,10 @@ indices_menores = total_pais_subregiao.groupby('Subregion')['VALUE'].idxmin()
 
 **Problema:** um país que forneceu dados por apenas 1 ano terá soma menor do que um microestado seguro que reportou dados por 20 anos consecutivos. O ranking fica distorcido pela cobertura histórica desigual.
 
+<br/>
 <!-- 📸 PRINT: Tabela paises_menores_homicidios (soma bruta) -->
-> 🖼️ **[Inserir print: tabela — Método 1 (Soma Bruta)]**
+<img width="543" height="423" alt="image" src="https://github.com/user-attachments/assets/66beb70a-bd17-43f3-a9ff-713eefd490db" />
+<br/>
 
 #### Abordagem 2 — Média anual (metodologicamente correta)
 
@@ -318,8 +325,10 @@ indices_menores_medias = media_anual_pais.groupby('Subregion')['VALUE'].idxmin()
 - `.idxmin()` — retorna o índice da linha com o menor valor dentro de cada grupo (mais eficiente do que ordenar e pegar o primeiro)
 - `.loc[]` — recupera as linhas completas a partir dos índices encontrados
 
+<br/>
 <!-- 📸 PRINT: Tabela menores_medias_subregiao (média anual) -->
-> 🖼️ **[Inserir print: tabela — Método 2 (Média Anual por Sub-região)]**
+<img width="582" height="423" alt="image" src="https://github.com/user-attachments/assets/0e0c7e69-e01a-457c-bac5-b41872881ed1" />
+<br/>
 
 ---
 
@@ -338,8 +347,10 @@ top_10_menores_mulheres = total_mulheres_pais.sort_values(ascending=True)
 
 **Problema:** microestados (Mônaco, San Marino, Liechtenstein...) sempre dominam o ranking simplesmente por terem populações muito pequenas — não porque são genuinamente mais seguros. Países que falharam em reportar dados à ONU na maioria dos anos também aparecem com somas artificialmente baixas.
 
+<br/>
 <!-- 📸 PRINT: Tabela top_10_menores_mulheres (contagem absoluta) -->
-> 🖼️ **[Inserir print: tabela — Método 1 (Contagem Absoluta)]**
+<img width="368" height="287" alt="image" src="https://github.com/user-attachments/assets/d441d5a5-1820-4a0a-89d8-2146a7d7a78b" />
+<br/>
 
 #### Abordagem 2 — Taxa média histórica (correta)
 
@@ -352,8 +363,10 @@ top_10_menores_taxas_mulheres = media_taxa_mulheres.sort_values(ascending=True)
 
 Com essa abordagem, o ranking reflete países onde o **risco real** de uma mulher ser vítima de homicídio é genuinamente baixo.
 
+<br/>
 <!-- 📸 PRINT: Tabela top_10_menores_taxas_mulheres (taxa média) -->
-> 🖼️ **[Inserir print: tabela — Método 2 (Taxa Média por 100 mil hab.)]**
+<img width="498" height="296" alt="image" src="https://github.com/user-attachments/assets/87666f1f-95c1-4305-89dc-0d7b8956342d" />
+<br/>
 
 ---
 
