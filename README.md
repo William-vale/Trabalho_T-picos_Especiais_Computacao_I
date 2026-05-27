@@ -87,6 +87,7 @@ Todo o código foi desenvolvido em **Python**, utilizando o ambiente **Google Co
 ```
 📦 projeto-homicidios-unodc/
 ├── 📄 perguntas1a5.py              # Código das perguntas 1 a 5 (EDA)
+├── 📄 topicos_regr.py              # Código sobre a regressão
 ├── 📄 README.md                    # Este arquivo
 ├── 📊 dataset_homicidios_paises_tratado.csv     # Dataset de países (gerado)
 └── 📊 dataset_homicidios_regioes_onu_tratado.csv # Dataset ONU (gerado)
