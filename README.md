@@ -33,6 +33,7 @@ A análise busca responder perguntas concretas sobre a distribuição de homicí
 Todo o código foi desenvolvido em **Python**, utilizando o ambiente **Google Colab**.
 
 🔗 **Notebook no Google Colab:** [Acessar notebook](https://colab.research.google.com/drive/1uo1YFYDQhMhz49TFIhQDVmmgOhvNqqZQ?usp=sharing#scrollTo=RtpEfPn7I6NB)
+<br/>
 🔗 **Acessar Slide de Apresentação:** [Acessar Slide](https://docs.google.com/presentation/d/1egZrnOOHDVeNVihhj5zVJnhyT5VM7VFH/edit?slide=id.p1#slide=id.p1)
 
 ---
