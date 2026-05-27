@@ -7,6 +7,7 @@
 ## 📋 Sumário
 
 - [Sobre o Projeto](#sobre-o-projeto)
+- [Links dos Projetos](#links)
 - [Base de Dados](#base-de-dados)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Estrutura do Projeto](#estrutura-do-projeto)
@@ -36,6 +37,8 @@ Este projeto foi desenvolvido como trabalho acadêmico da disciplina de **Tópic
 A análise busca responder perguntas concretas sobre a distribuição de homicídios intencionais no mundo, identificar padrões regionais, diferenças de gênero e construir um modelo preditivo capaz de explicar a variação nas taxas de homicídio entre países.
 
 Todo o código foi desenvolvido em **Python**, utilizando o ambiente **Google Colab**.
+
+## Links dos Projetos
 
 🔗 **Notebook no Google Colab Com perguntas respondidas:** [Acessar notebook](https://colab.research.google.com/drive/1uo1YFYDQhMhz49TFIhQDVmmgOhvNqqZQ?usp=sharing#scrollTo=RtpEfPn7I6NB)
 <br/>
