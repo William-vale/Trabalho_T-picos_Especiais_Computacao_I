@@ -48,7 +48,7 @@ Todo o código foi desenvolvido em **Python**, utilizando o ambiente **Google Co
 | **Formato** | CSV |
 | **Acesso** | Público |
 
-🔗 **Fonte oficial:** [UNODC Statistics](https://dataunodc.un.org/dp-intentional-homicide-victims)
+🔗 **Fonte oficial:** [UNODC Statistics](https://raw.githubusercontent.com/Atila-dev/teste-topicos/refs/heads/main/data_cts_intentional_homicide.csv)
 
 ### Principais colunas
 
