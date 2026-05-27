@@ -177,13 +177,14 @@ df_onu = df_tratado[
 # df_onu.shape    → (XXXX, 13)
 ```
 
-> 🖼️ <img width="300" height="282" alt="image" src="https://github.com/user-attachments/assets/3038baa6-d858-432b-acd1-31dd33a548cb" />
+<img width="300" height="282" alt="image" src="https://github.com/user-attachments/assets/3038baa6-d858-432b-acd1-31dd33a548cb" />
 
 <!-- 📸 PRINT: Saída do df_paises.describe() -->
-> 🖼️ **[Inserir print: df_paises.describe()]**
+<img width="282" height="289" alt="image" src="https://github.com/user-attachments/assets/142bffa7-a62f-4467-860f-0292d78e9ea4" />
 
 <!-- 📸 PRINT: Contagem de valores nulos e duplicados -->
-> 🖼️ **[Inserir print: valores nulos e linhas duplicadas]**
+<img width="519" height="171" alt="image" src="https://github.com/user-attachments/assets/a68157c1-6ef1-4baa-b9b8-e495c94bb723" />
+
 
 ---
 
