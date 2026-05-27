@@ -221,9 +221,9 @@ df_taxa = df_paises[
 
 #### Resultado
 
-<!-- 📸 PRINT: Tabela top_10_paises com países e taxa média -->
-<img width="652" height="308" alt="image" src="https://github.com/user-attachments/assets/d7fc5b3a-264c-411c-b716-62c384d70439" />
 <br/>
+<!-- 📸 PRINT: Tabela top_10_paises com países e taxa média -->
+<img width="385" height="261" alt="image" src="https://github.com/user-attachments/assets/31e6c4f1-5ba1-489f-a0c3-8ec2415bce2a" />
 <br/>
 
 ---
