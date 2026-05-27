@@ -434,8 +434,13 @@ Desenvolvido como trabalho acadêmico.
 
 | Nome | GitHub |
 |---|---|
-| _(seu nome)_ | [@seu-usuario](https://github.com/seu-usuario) |
-| _(nome colega)_ | [@colega](https://github.com/colega) |
+| _(William do Vale)_ | [@William-vale](https://github.com/William-vale) |
+| _(Antonio Lucas)_ | [@AntLucass](https://github.com/AntLucass) |
+| _(Atila-dev)_ | [@Atila-dev](https://github.com/Atila-dev) |
+| _(Augusto Derik)_ | [@AugustoDerik](https://github.com/AugustoDerik) |
+| _(Geilma Melo)_ | [@GeilmaMelo](https://github.com/GeilmaMelo) |
+| _(Leandro Melo)_ | [@LeandroMel0](https://github.com/LeandroMel0) |
+| _(Viennel)_ | [@Viennel](https://github.com/Viennel) |
 
 ---
 
